@@ -1,12 +1,15 @@
 package com.craig.couchbasesyncexample;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
+import com.couchbase.lite.replicator.Replication;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +22,14 @@ public class MainController {
     private Manager cbManager;
     private Database database;
     int counter = 0;
+    private URL url;
+
+    public MainController() {
+        enableLogging();
+    }
 
     public void onGo() {
-        Log.d(TAG, "Begin Go button click handler.");
+        Log.d(TAG, "Begin Create button click handler.");
         final Map<String, Object> document = new HashMap<String, Object>() {{
             put("name", "Cliff");
             put("age", "40");
@@ -31,7 +39,18 @@ public class MainController {
         try { couchbaseDoc.putProperties(document); }
         catch (CouchbaseLiteException e) { e.printStackTrace(); }
         Log.d(TAG, "Created doc with ID " + couchbaseDoc.getId());
-        Log.d(TAG, "Go button click was handled.");
+        Log.d(TAG, "Create button click was handled.");
+    }
+
+
+    private void enableLogging() {
+        Manager.enableLogging(TAG, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG_SYNC_ASYNC_TASK, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG_SYNC, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG_QUERY, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG_VIEW, Log.VERBOSE);
+        Manager.enableLogging(com.couchbase.lite.util.Log.TAG_DATABASE, Log.VERBOSE);
     }
 
     public void setCBManager(Manager cbmanager) {
@@ -44,5 +63,26 @@ public class MainController {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public void onSync() {
+        Log.d(TAG, "Begin Sync button click handler.");
+        Log.d(TAG, "Replicating to " + getDBUrl());
+        final Replication pullReplication = getDatabase().createPullReplication(getDBUrl());
+        final Replication pushReplication = getDatabase().createPushReplication(getDBUrl());
+        pullReplication.setContinuous(true);
+        pushReplication.setContinuous(true);
+        pullReplication.start();
+        pushReplication.start();
+        Log.d(TAG, "End Sync button click handler.");
+    }
+
+    @NonNull
+    private URL getDBUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
     }
 }

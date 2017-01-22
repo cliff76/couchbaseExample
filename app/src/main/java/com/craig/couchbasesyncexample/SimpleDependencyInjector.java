@@ -9,6 +9,8 @@ import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by Clifton Craig on 1/21/17.
@@ -16,6 +18,9 @@ import java.io.IOException;
  */
 public class SimpleDependencyInjector implements DependencyInjector {
 
+    public static final String DBHOST = "10.0.0.105";
+    public static final String DBPORT = "4984";
+    public static final String DBNAME = "todo";
     private final SingleThreadWorker asyncWorker;
 
     public SimpleDependencyInjector() {
@@ -38,20 +43,28 @@ public class SimpleDependencyInjector implements DependencyInjector {
     private void doInjection(MainActivity mainActivity) {
         mainActivity.setAsyncWorker(asyncWorker);
         final Manager manager = getManagerForContext(mainActivity);
-        mainActivity.getMainController().setCBManager(manager);
-        mainActivity.getMainController().setDatabase(getDatabaseForManager(manager));
+        injectMainController(manager, mainActivity.getMainController());
+    }
+
+    private void injectMainController(Manager manager, MainController mainController) {
+        mainController.setCBManager(manager);
+        mainController.setDatabase(getDatabaseForManager(manager));
+        mainController.setUrl(getDBUrl());
+    }
+
+    @NonNull
+    private URL getDBUrl() {
+        final String dbURLString = "http://" + DBHOST + ":" + DBPORT + "/" + DBNAME;
+        try { return new URL(dbURLString); }
+        catch (MalformedURLException e) { throw new RuntimeException("Could not create DB URL string " + dbURLString, e); }
     }
 
     private Database getDatabaseForManager(Manager manager) {
         final Database database;
-        try { database = manager.getDatabase(getDatabaseName()); }
+        try {
+            database = manager.getDatabase(DBNAME); }
         catch (CouchbaseLiteException e) { throw new RuntimeException("Could not create database.", e); }
         return database;
-    }
-
-    @NonNull
-    private String getDatabaseName() {
-        return "todo";
     }
 
     @NonNull

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CouchbaseSyncExample</string>
-    <string name="go">Go</string>
+    <string name="createButton">Create document</string>
+    <string name="sync">Start Sync</string>
 </resources>

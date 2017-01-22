@@ -19,11 +19,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onGo(View sender) {
-        Log.d(TAG, "Go button clicked.");
+        Log.d(TAG, "Create button clicked.");
         getAsyncWorker().doAsync(new Runnable(){
             @Override
             public void run() {
                 getMainController().onGo();
+            }
+        });
+    }
+
+    public void onSync(View sender) {
+        Log.d(TAG, "Sync button clicked.");
+        getAsyncWorker().doAsync(new Runnable(){
+            @Override
+            public void run() {
+                getMainController().onSync();
             }
         });
     }
