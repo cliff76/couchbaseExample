@@ -7,6 +7,8 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
+import com.couchbase.lite.auth.Authenticator;
+import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 
 import java.net.URL;
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 public class MainController {
     private static final String TAG = MainController.class.getName();
+    public static final String USERNAME = "cliffuser1";
+    public static final String PASSWORD = "pass";
     private Manager cbManager;
     private Database database;
     int counter = 0;
@@ -72,6 +76,9 @@ public class MainController {
         final Replication pushReplication = getDatabase().createPushReplication(getDBUrl());
         pullReplication.setContinuous(true);
         pushReplication.setContinuous(true);
+        final Authenticator basicAuthenticator = AuthenticatorFactory.createBasicAuthenticator(USERNAME, PASSWORD);
+        pullReplication.setAuthenticator(basicAuthenticator);
+        pushReplication.setAuthenticator(basicAuthenticator);
         pullReplication.start();
         pushReplication.start();
         Log.d(TAG, "End Sync button click handler.");

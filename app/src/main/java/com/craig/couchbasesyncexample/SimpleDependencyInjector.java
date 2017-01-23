@@ -18,9 +18,9 @@ import java.net.URL;
  */
 public class SimpleDependencyInjector implements DependencyInjector {
 
-    public static final String DBHOST = "10.0.0.105";
+    public static final String DBHOST = "10.15.21.6";
     public static final String DBPORT = "4984";
-    public static final String DBNAME = "todo";
+    public static final String DBNAME = "pm";
     private final SingleThreadWorker asyncWorker;
 
     public SimpleDependencyInjector() {
