@@ -27,6 +27,7 @@ public class MainController {
     private Database database;
     int counter = 0;
     private URL url;
+    private ReplicationListener replicationListener;
 
     public MainController() {
         enableLogging();
@@ -70,6 +71,10 @@ public class MainController {
     }
 
     public void onSync() {
+        startReplication();
+    }
+
+    private void startReplication() {
         Log.d(TAG, "Begin Sync button click handler.");
         Log.d(TAG, "Replicating to " + getDBUrl());
         final Replication pullReplication = getDatabase().createPullReplication(getDBUrl());
@@ -81,6 +86,18 @@ public class MainController {
         pushReplication.setAuthenticator(basicAuthenticator);
         pullReplication.start();
         pushReplication.start();
+        pullReplication.addChangeListener(new Replication.ChangeListener() {
+            @Override
+            public void changed(Replication.ChangeEvent event) {
+                getReplicationListener().updatedDocumentCount(database.getDocumentCount());
+                String status = "Completed changes: " + event.getCompletedChangeCount() + "\n"
+                        + "Changes: " + event.getChangeCount();
+                if(event.getError()!=null) {
+                    status += "\nError: " + event.getError().getLocalizedMessage();
+                }
+                getReplicationListener().status(status);
+            }
+        });
         Log.d(TAG, "End Sync button click handler.");
     }
 
@@ -91,5 +108,13 @@ public class MainController {
 
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    public ReplicationListener getReplicationListener() {
+        return replicationListener;
+    }
+
+    public void setReplicationListener(ReplicationListener replicationListener) {
+        this.replicationListener = replicationListener;
     }
 }

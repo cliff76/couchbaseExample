@@ -43,13 +43,14 @@ public class SimpleDependencyInjector implements DependencyInjector {
     private void doInjection(MainActivity mainActivity) {
         mainActivity.setAsyncWorker(asyncWorker);
         final Manager manager = getManagerForContext(mainActivity);
-        injectMainController(manager, mainActivity.getMainController());
+        injectMainController(manager, mainActivity, mainActivity.getMainController());
     }
 
-    private void injectMainController(Manager manager, MainController mainController) {
+    private void injectMainController(Manager manager, MainActivity mainActivity, MainController mainController) {
         mainController.setCBManager(manager);
         mainController.setDatabase(getDatabaseForManager(manager));
         mainController.setUrl(getDBUrl());
+        mainController.setReplicationListener(mainActivity);
     }
 
     @NonNull

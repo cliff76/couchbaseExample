@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Objects in DB"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/textView" />
@@ -38,4 +38,21 @@
         android:layout_marginTop="22dp"
         android:id="@+id/button2"
         android:onClick="onSync" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
+        android:layout_alignEnd="@+id/button"
+        android:id="@+id/txtCount" />
+
+    <TextView
+        android:text="replication status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button2"
+        android:layout_alignStart="@+id/button2"
+        android:layout_marginTop="22dp"
+        android:id="@+id/txtStatus" />
 </RelativeLayout>
