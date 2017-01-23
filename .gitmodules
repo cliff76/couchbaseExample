@@ -1,0 +1,3 @@
+[submodule "couchbase-lite-java-core"]
+	path = couchbase-lite-java-core
+	url = https://github.com/cliff76/couchbase-lite-java-core.git
